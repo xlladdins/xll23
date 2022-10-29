@@ -27,6 +27,9 @@
     <ClInclude Include="ref.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="xll.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="XLCALL.CPP">

@@ -150,6 +150,7 @@
     <ClInclude Include="ref.h" />
     <ClInclude Include="XLCALL.H" />
     <ClInclude Include="oper.h" />
+    <ClInclude Include="xll.h" />
     <ClInclude Include="xloper.h" />
   </ItemGroup>
   <ItemGroup>

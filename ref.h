@@ -1,8 +1,6 @@
 // ref.h - REF functions
 #pragma once
 #include <concepts>
-#include <memory>
-#include <type_traits>
 #include <Windows.h>
 #include "XLCALL.H"
 
@@ -41,7 +39,7 @@ namespace xll {
 
 	template<class X> requires is_ref<X>
 	struct REF : public X {
-		// Default to A1
+		// Default to A1:A1
 		REF(int r = 0, int c = 0, int h = 1, int w = 1)
 			: X{.rwFirst = r, .rwLast = r + h - 1, .colFirst = c, .colLast = c + w - 1}
 		{ }

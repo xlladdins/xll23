@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="oper.h">
+    <ClInclude Include="xoper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="XLCALL.H">
@@ -33,12 +33,18 @@
     <ClInclude Include="counted_array_view.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="xll_traits.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="xll_register.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="XLCALL.CPP">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="auto.cpp">
+    <ClCompile Include="xlauto.cpp">
       <Filter>Header Files</Filter>
     </ClCompile>
   </ItemGroup>

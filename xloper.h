@@ -1,22 +1,20 @@
 // xloper.h - XLOPER functions
+// Use native C SDK XLOPER/12 structs and compile time string literals for xltypeStr with fixed length
 #pragma once
 #include <map>
 #include "xlref.h"
 
 namespace xll {
 
-	template<class X>
-	concept is_xloper
-		= std::is_same_v<XLOPER, X> || std::is_same_v<XLOPER12, X>;
 
-	template<class X> requires is_xloper<X>
-	inline auto type(const X& x)
+	template<is_xloper X>
+	inline constexpr auto type(const X& x)
 	{
 		return x.xltype & ~(xlbitDLLFree | xlbitXLFree);
 	}
 
-	template<class X> requires is_xloper<X>
-	inline auto rows(const X& x)
+	template<is_xloper X>
+	inline constexpr auto rows(const X& x)
 	{
 		switch (type(x)) {
 		case xltypeMulti:
@@ -31,8 +29,8 @@ namespace xll {
 		return 1;
 	}
 
-	template<class X> requires is_xloper<X>
-	inline auto columns(const X& x)
+	template<is_xloper X>
+	inline constexpr auto columns(const X& x)
 	{
 		switch (type(x)) {
 		case xltypeMulti:
@@ -47,14 +45,14 @@ namespace xll {
 		return 1;
 	}
 
-	template<class X> requires is_xloper<X>
-	inline auto size(const X& x)
+	template<is_xloper X>
+	inline constexpr auto size(const X& x)
 	{
 		return type(x) == xltypeStr ? x.val.str[0] : rows(x) * columns(x);
 	}
 
-	template<class X> requires is_xloper<X>
-	inline auto begin(const X& x)
+	template<is_xloper X>
+	inline constexpr auto begin(const X& x)
 	{
 		switch(type(x)) {
 		case xltypeMulti:
@@ -65,8 +63,8 @@ namespace xll {
 			return &x;
 		}
 	}
-	template<class X> requires is_xloper<X>
-	inline auto end(const X& x)
+	template<is_xloper X>
+	inline constexpr auto end(const X& x)
 	{
 		switch (type(x)) {
 		case xltypeMulti:
@@ -78,9 +76,31 @@ namespace xll {
 		}
 	}
 
-	template<class X> requires is_xloper<X>
+	template<is_xloper X>
+	X& index(X& x, int i)
+	{
+		return x.val.array[i];
+	}
+	template<is_xloper X>
+	const X& index(X& x, int i)
+	{
+		return x.val.array[i];
+	}
+	template<is_xloper X>
+	X& index(X& x, int i, int j)
+	{
+		return x.val.array[i * columns(x) + j];
+	}
+	template<is_xloper X>
+	const X& index(X& x, int i, int j)
+	{
+		return x.val.array[i*columns(x) + j];
+	}
+
+	// xltypeNum = 1
+	template<is_xloper X>
 	struct Num : X {
-		Num(double num)
+		constexpr Num(double num)
 			: X{ .val = {.num = num}, .xltype = xltypeNum }
 		{ }
 		operator double&()
@@ -89,12 +109,70 @@ namespace xll {
 		}
 	};
 
-	template<class X> requires is_xloper<X>
-	inline X Bool(bool xbool)
+	// counted Pascal string
+	template<size_t N>
+	struct PStr {
+		char str[N]{};
+		constexpr PStr(const char(&_str)[N])
+		{
+			str[0] = static_cast<char>(N - 1);
+			for (size_t i = 0; i < N - 1; ++i) {
+				str[i + 1] = _str[i];
+			}
+		}
+	};
+	template<PStr str>
+	constexpr auto operator"" _pstr()
+	{
+		return str.str;
+	}
+	// xltypeStr = 2
+	template<size_t N>
+	struct Str : public XLOPER {
+		PStr<N> str;
+		constexpr Str(const char(&_str)[N])
+			: XLOPER{ .xltype = xltypeStr }, str{ PStr(_str) }
+		{
+			XLOPER::val.str = str.str;
+		}
+	};
+
+	// counted Pascal string
+	template<size_t N>
+	struct WPStr {
+		wchar_t str[N]{};
+		constexpr WPStr(const wchar_t(&_str)[N])
+		{
+			str[0] = static_cast<wchar_t>(N - 1);
+			for (size_t i = 0; i < N - 1; ++i) {
+				str[i + 1] = _str[i];
+			}
+		}
+	};
+	template<WPStr str>
+	constexpr auto operator"" _wpstr()
+	{
+		return str.str;
+	}
+	// xltypeStr = 2
+	template<size_t N>
+	struct Str12 : public XLOPER12 {
+		WPStr<N> str;
+		constexpr Str12(const wchar_t(&_str)[N])
+			: XLOPER12{ .xltype = xltypeStr }, str{ WPStr(_str) }
+		{
+			XLOPER12::val.str = str.str;
+		}
+	};
+
+	// xltypeBool = 4
+	template<is_xloper X>
+	inline constexpr X Bool(bool xbool)
 	{
 		return X{ .val = {.xbool = xbool}, .xltype = xltypeBool };
 	}
-	// xlerrX, Excel error string, error description
+
+	// xlerrX, Excel error string, error message
 #define XLL_ERR(X)	                                                        \
 	X(Null,  "#NULL!",  "intersection of two ranges that do not intersect") \
 	X(Div0,  "#DIV/0!", "formula divides by zero")                          \
@@ -105,7 +183,7 @@ namespace xll {
 	X(NA,    "#N/A",    "value not available to a formula.")                \
 
 #define XLL_ERR_ENUM(a,b,c) a = xlerr##a,
-	enum class ErrType {
+	enum class XlErr {
 		XLL_ERR(XLL_ERR_ENUM)
 	};
 #undef XLL_ERR_ENUM
@@ -120,10 +198,38 @@ namespace xll {
 	};
 #undef XLL_ERR_ENUM
 
-	template<class X> requires is_xloper<X>
-	inline X Err(ErrType err)
+	// xltypeErr = 16
+	template<is_xloper X>
+	inline constexpr X Err(XlErr err)
 	{
 		return X{ .val = {.err = err}, .xltype = xltypeErr };
 	}
+
+#ifdef _DEBUG
+	inline void test_xloper()
+	{
+		{
+			constexpr auto s = "abc"_pstr;
+			static_assert(3 == s[0]);
+			static_assert('c' == s[3]);
+		}
+		{
+			constexpr auto s = L"abc"_wpstr;
+			static_assert(3 == s[0]);
+			static_assert('c' == s[3]);
+		}
+		{
+			constexpr auto s = Str("abc");
+			static_assert(3 == s.val.str[0]);
+			static_assert('c' == s.val.str[3]);
+		}
+		{
+			constexpr auto s = Str12(L"abc");
+			static_assert(3 == s.val.str[0]);
+			static_assert('c' == s.val.str[3]);
+		}
+	}
+#endif // _DEBUG
+
 
 } // namespace xll

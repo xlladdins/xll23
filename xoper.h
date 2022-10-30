@@ -23,8 +23,8 @@ namespace xll {
 	class XOPER : public X {
 		using X::xltype;
 		using X::val;
-		using xchar = type_traits<X>::xchar;
-		using charx = type_traits<X>::charx;
+		using xchar = traits<X>::xchar;
+		using charx = traits<X>::charx;
 
 		constexpr XOPER()
 			: X{.xltype = xltypeNil}

@@ -33,10 +33,13 @@
     <ClInclude Include="counted_array_view.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="xll_traits.h">
+    <ClInclude Include="xltraits.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="xll_register.h">
+    <ClInclude Include="xlregister.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ensure.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

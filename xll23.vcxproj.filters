@@ -24,16 +24,22 @@
     <ClInclude Include="xloper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ref.h">
+    <ClInclude Include="xlref.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="xll.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="counted_array_view.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="XLCALL.CPP">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="auto.cpp">
+      <Filter>Header Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -29,6 +29,7 @@ namespace xll {
 		static const size_t str_max = 0x7FFF;
 	};
 
+	// null terminated length
 	template<class T>
 	size_t len(const T* t)
 	{
@@ -70,21 +71,29 @@ namespace xll {
 			return xltype & ~(xlbitDLLFree | xlbitXLFree);
 		}
 
+		size_t size() const
+		{
+			return size(*this);
+		}
+
 		operator bool() const
 		{
 			switch (type()) {
 			case xltypeNum: return val.num;
 			case xltypeStr: return val.str[0];
 			case xltypeBool: return val.xbool;
-			case xltypeInt: return val.w;
+			case xltypeSRef: return size(val.sref.ref);
 			case xltypeErr: return false;
+			case xltypeInt: return val.w;
 			case xltypeMulti: return val.array.rows > 1 || val.array.columns > 1 || val.
 			}
+
+			return false;
 		}
 
 		// Num
 		explicit OPER(double num)
-			: X{.val.num = num, .xltype = xltypeNum}
+			: X{Num(num)}
 		{ }
 
 		// Str
@@ -105,96 +114,9 @@ namespace xll {
 
 		// Bool
 		explicit OPER(bool xbool)
-			: X{.val.xbool = xbool, .xltype = xltypeBool}
+			: X{Bool(xbool)}
 		{ }
 	};
-
-	template<class X> requires is_xloper<X>
-	class Str : OPER<X> {
-		// length of null terminated string
-		size_t len(const xchar* s)
-		{
-			size_t n = 0;
-
-			while (*s++) ++n;
-
-			return n;
-		}
-
-		// allocate and count
-		void allocate(size_t n)
-		{
-			xltype = xltypeStr;
-			val.str = new xchar[n + 1];
-			val.str[0] = static_cast<xchar>(n);
-		}
-		// copy counted string
-		void copy(const xchar* str)
-		{
-			size_t n = val.str[0];
-			memcpy_s(val.str + 1, n, s.val.str + 1, n);
-
-		}
-		void deallocate()
-		{
-			delete[] val.str;
-		}
-	public:
-		explicit Str(const xchar* str)
-		{
-			allocate(len(str));
-			copy(str);
-		}
-		Str(size_t n, const xchar* str)
-		{
-			allocate(n);
-			copy(str);
-		}
-		template<size_t N>
-		constexpr Str(const xchar(&_str)[N])
-		{
-			allocate(N);
-			copy(_str);
-		}
-		Str(const Str& s)
-		{
-			allocate(s.val.str[0]);
-			copy(s.val.str + 1);
-		}
-		Str& operator=(const Str& s)
-		{
-			deallocate();
-			allocate(s.val.str[0]);
-			copy(s.val.str + 1);
-
-			return *this;
-		}
-		~Str()
-		{
-			delete[] val.str;
-		}
-
-		bool operator==(const Str& str) const
-		{
-			return val.str[0] == str.val.str[0] && operator==(str.val.str + 1, str.val.str[0]);
-
-		}
-		bool operator==(const xchar* str, xchar len = 0) const
-		{
-			xchar i = 1;
-
-			while (i <= val.str[0] && *str) {
-				if (val.str[i] != *str) {
-					return false;
-				}
-				++i;
-				++str;
-			}
-
-			return i == val.str[0] && !*str;
-		}
-	};
-
 
 #ifdef _DEBUG
 	//inline constexpr int i = 1;

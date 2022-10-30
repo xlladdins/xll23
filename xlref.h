@@ -1,7 +1,9 @@
-// ref.h - REF functions
+// xlref.h - XLREF functions
 #pragma once
 #include <concepts>
+#ifndef _INC_WINDOWS
 #include <Windows.h>
+#endif
 #include "XLCALL.H"
 
 namespace xll {

@@ -1,6 +1,7 @@
 // xloper.h - XLOPER functions
 #pragma once
-#include "ref.h"
+#include <map>
+#include "xlref.h"
 
 namespace xll {
 
@@ -49,29 +50,49 @@ namespace xll {
 	template<class X> requires is_xloper<X>
 	inline auto size(const X& x)
 	{
-		return rows(x) * columns(x);
+		return type(x) == xltypeStr ? x.val.str[0] : rows(x) * columns(x);
 	}
 
 	template<class X> requires is_xloper<X>
 	inline auto begin(const X& x)
 	{
-		return type(x) == xltypeMulti ? x.val.array.lparray : &x;
+		switch(type(x)) {
+		case xltypeMulti:
+			return x.val.array.lparray;
+		case xltypeStr:
+			return x.val.str + 1;
+		default:
+			return &x;
+		}
 	}
 	template<class X> requires is_xloper<X>
 	inline auto end(const X& x)
 	{
-		return type(x) == xltypeMulti ? x.val.array.lparray + size(x) : &x + 1;
+		switch (type(x)) {
+		case xltypeMulti:
+			return x.val.array.lparray + size(x);
+		case xltypeStr:
+			return x.val.str + x.val.str[0] + 1;
+		default:
+			return &x + 1;
+		}
 	}
 
 	template<class X> requires is_xloper<X>
-	inline X Num(double num)
-	{
-		return X{ .val.num = num, .xltype = xltypeNum };
-	}
+	struct Num : X {
+		Num(double num)
+			: X{ .val = {.num = num}, .xltype = xltypeNum }
+		{ }
+		operator double&()
+		{
+			return X::val.num;
+		}
+	};
+
 	template<class X> requires is_xloper<X>
 	inline X Bool(bool xbool)
 	{
-		return X{ .val.xbool = xbool, .xltype = xltypeBool };
+		return X{ .val = {.xbool = xbool}, .xltype = xltypeBool };
 	}
 	// xlerrX, Excel error string, error description
 #define XLL_ERR(X)	                                                        \
@@ -84,15 +105,25 @@ namespace xll {
 	X(NA,    "#N/A",    "value not available to a formula.")                \
 
 #define XLL_ERR_ENUM(a,b,c) a = xlerr##a,
-	enum class Err {
+	enum class ErrType {
+		XLL_ERR(XLL_ERR_ENUM)
+	};
+#undef XLL_ERR_ENUM
+#define XLL_ERR_ENUM(a,b,c) {xlerr##a, b},
+	inline const std::map<int, const char*> xll_err_str = {
+		XLL_ERR(XLL_ERR_ENUM)
+	};
+#undef XLL_ERR_ENUM
+#define XLL_ERR_ENUM(a,b,c) {xlerr##a, c},
+	inline const std::map<int, const char*> xll_err_msg = {
 		XLL_ERR(XLL_ERR_ENUM)
 	};
 #undef XLL_ERR_ENUM
 
 	template<class X> requires is_xloper<X>
-	inline X Err(Err err)
+	inline X Err(ErrType err)
 	{
-		return X{ .val.err = err, .xltype = xltypeErr };
+		return X{ .val = {.err = err}, .xltype = xltypeErr };
 	}
 
 } // namespace xll

@@ -147,13 +147,15 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="ref.h" />
+    <ClInclude Include="counted_array_view.h" />
+    <ClInclude Include="xlref.h" />
     <ClInclude Include="XLCALL.H" />
     <ClInclude Include="oper.h" />
     <ClInclude Include="xll.h" />
     <ClInclude Include="xloper.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="auto.cpp" />
     <ClCompile Include="XLCALL.CPP" />
   </ItemGroup>
   <ItemGroup>

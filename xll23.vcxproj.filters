@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="xoper.h">
+    <ClInclude Include="oper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="XLCALL.H">
@@ -40,6 +40,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ensure.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="excel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

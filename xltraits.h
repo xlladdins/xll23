@@ -57,6 +57,10 @@ namespace xll {
 		using xcol = WORD;
 		static const size_t rw_max = 0xFFFF;
 		static const size_t col_max = 0xFF;
+		static int Excelv(int xlfn, LPXLOPER operRes, int count, LPXLOPER opers[])
+		{
+			return ::Excel4v(xlfn, operRes, count, opers);
+		}
 	};
 
 	template<> struct traits<XLOPER12> {
@@ -70,6 +74,10 @@ namespace xll {
 		using xcol = INT32;
 		static const size_t rw_max = 0xFFFFF;
 		static const size_t col_max = 0x3FFF;
+		static int Excelv(int xlfn, LPXLOPER12 operRes, int count, LPXLOPER12 opers[])
+		{
+			return ::Excel12v(xlfn, operRes, count, opers);
+		}
 	};
 
 	template<> struct traits<char> {

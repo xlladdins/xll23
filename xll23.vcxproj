@@ -149,11 +149,12 @@
   <ItemGroup>
     <ClInclude Include="counted_array_view.h" />
     <ClInclude Include="ensure.h" />
+    <ClInclude Include="excel.h" />
     <ClInclude Include="xlregister.h" />
     <ClInclude Include="xltraits.h" />
     <ClInclude Include="xlref.h" />
     <ClInclude Include="XLCALL.H" />
-    <ClInclude Include="xoper.h" />
+    <ClInclude Include="oper.h" />
     <ClInclude Include="xll.h" />
     <ClInclude Include="xloper.h" />
   </ItemGroup>

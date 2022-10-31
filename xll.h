@@ -21,6 +21,6 @@ using XLOPERX = XLOPER;
 using xchar = char;
 #endif
 
-#include "xoper.h"
+#include "oper.h"
 //#include "counted_array_view.h"
 

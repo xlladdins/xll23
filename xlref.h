@@ -19,28 +19,28 @@ namespace xll {
 			&& r.colLast == s.colLast;
 	}
 
-	inline constexpr auto height(const XLREF12& x)
+	inline constexpr INT32 height(const XLREF12& x)
 	{
 		return x.rwLast - x.rwFirst + 1;
 	}
-	inline constexpr auto width(const XLREF12& x)
+	inline constexpr INT32 width(const XLREF12& x)
 	{
 		return x.colLast - x.colFirst + 1;
 	}
-	inline constexpr auto area(const XLREF12& x)
+	inline constexpr INT32 area(const XLREF12& x)
 	{
 		return height(x) * width(x);
 	}
 
-	inline constexpr auto height(const XLREF& x)
+	inline constexpr WORD height(const XLREF& x)
 	{
 		return x.rwLast - x.rwFirst + 1;
 	}
-	inline constexpr auto width(const XLREF& x)
+	inline constexpr WORD width(const XLREF& x)
 	{
 		return x.colLast - x.colFirst + 1;
 	}
-	inline constexpr auto area(const XLREF& x)
+	inline constexpr WORD area(const XLREF& x)
 	{
 		return height(x) * width(x);
 	}

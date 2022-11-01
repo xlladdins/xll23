@@ -21,10 +21,11 @@ namespace xll {
 
 	template<is_xloper X>
 	struct XOPER : X {
-		using X::xltype;
-		using X::val;
+		using type = X;
 		using xchar = traits<X>::xchar;
 		using charx = traits<X>::charx;
+		using X::xltype;
+		using X::val;
 	private:
 		void swap(XOPER& x)
 		{
@@ -123,11 +124,6 @@ namespace xll {
 			return operator==(*this, o);
 		}
 
-		int type() const
-		{
-			return xll::type(*this);
-		}
-
 		size_t size() const
 		{
 			return xll::size(*this);
@@ -187,7 +183,7 @@ namespace xll {
 		template<is_char T>
 		bool operator==(const T* str)
 		{
-			if (type() != xltypeStr) {
+			if (xll::type(*this) != xltypeStr) {
 				return false;
 			}
 

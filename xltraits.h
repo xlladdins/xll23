@@ -37,17 +37,15 @@ namespace xll {
 	struct traits {};
 
 	template<> struct traits<XLREF> {
-		using xloper = XLOPER;
 		using type = XLREF;
 		using xrw = WORD;
-		using xcol = BYTE;
+		using xcol = WORD;
 	};
 
 	template<> struct traits<XLREF12> {
-		using xloper = XLOPER12;
-		using type = XLREF12;
-		using xrw = RW;
-		using xcol = COL;
+		using type = XLREF;
+		using xrw = INT32;
+		using xcol = INT32;
 	};
 
 	template<> struct traits<XLOPER> {
@@ -84,25 +82,11 @@ namespace xll {
 		}
 	};
 
-	template<> struct traits<char> {
+	template<> struct traits<CHAR> {
 		using xloper = XLOPER;
 	};
-	template<> struct traits<wchar_t> {
+	template<> struct traits<XCHAR> {
 		using xloper = XLOPER12;
 	};
-
-	template<> struct traits<unsigned int> { 
-		using type = XLREF;
-		using xrw = WORD;
-		using xcol = BYTE;
-	};
-	template<> struct traits<signed int> { 
-		using type = XLREF12;
-		using xrw = INT32;
-		using xcol = INT32;
-	};
-
-
-
 
 } // namespace xll

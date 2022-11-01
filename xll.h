@@ -14,11 +14,9 @@
 #if XLL_VERSION == 12
 using XLREFX = XLREF12;
 using XLOPERX = XLOPER12;
-using xchar = XCHAR;
 #else
 using XLREFX = XLREF;
 using XLOPERX = XLOPER;
-using xchar = CHAR;
 #endif
 
 #include "excel.h"

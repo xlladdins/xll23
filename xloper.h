@@ -43,7 +43,7 @@ namespace xll {
 	}
 
 	template<XlOper X>
-	inline constexpr auto rows(const X& x)
+	inline constexpr traits<typename X::type>::xrw rows(const X& x)
 	{
 		switch (type(x)) {
 			case xltypeMulti:
@@ -59,7 +59,7 @@ namespace xll {
 	}
 
 	template<XlOper X>
-	inline constexpr auto columns(const X& x)
+	inline constexpr traits<typename X::type>::xcol columns(const X& x)
 	{
 		switch (type(x)) {
 			case xltypeMulti:
@@ -75,7 +75,7 @@ namespace xll {
 	}
 
 	template<XlOper X>
-	inline constexpr auto size(const X& x)
+	inline constexpr traits<typename X::type>::xrw size(const X& x)
 	{
 		return rows(x) * columns(x);
 	}
@@ -158,7 +158,6 @@ namespace xll {
 
 		return true; // Missing, Nil
 	}
-
 
 	// 1-d index
 	template<XlOper X>
@@ -389,11 +388,15 @@ namespace xll {
 	{
 		{
 			constexpr Multi<1, 2> m;
-			static_assert(1 == rows(Multi<1, 2>{}));
+			static_assert(1 == rows(m));
 		}
 		{
 			constexpr Multi4<1, 2> m;
-			static_assert(1 == rows(Multi<1, 2>{}));
+			static_assert(2 == columns(m));
+		}
+		{
+			constexpr Multi4<2, 3> m;
+			static_assert(6 == size(m));
 		}
 	}
 #endif // _DEBUG

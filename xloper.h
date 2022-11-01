@@ -353,7 +353,7 @@ namespace xll {
 	struct Multi : XLOPER12 {
 		using type = XLOPER12;
 
-		type arr[R * C];
+		XLOPER12 arr[R * C];
 		constexpr Multi()
 			: type{ .val = {.array = {.rows = R, .columns = C}}, .xltype = xltypeMulti}
 		{
@@ -370,7 +370,7 @@ namespace xll {
 	struct Multi4 : XLOPER {
 		using type = XLOPER;
 
-		type arr[R * C] = { 0 };
+		XLOPER arr[R * C] = { 0 };
 		constexpr Multi4()
 			: type{ .val = {.array = {.lparray = arr, .rows = R, .columns = C }}, .xltype = xltypeMulti }
 		{

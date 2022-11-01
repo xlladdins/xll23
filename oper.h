@@ -50,9 +50,8 @@ namespace xll {
 				delete[] val.str;
 			}
 			else if (X::xltype |= xlbitXLFree) {
-				//X o;
-				//X* this_[1] = { this };
-				//traits<X>::Excelv(xlFree, &o, 1, (X**)this_);
+				X* this_[1] = { this };
+				traits<X>::Excelv(xlFree, 0, 1, (X**)this_);
 			}
 
 			xltype = xltypeNil;

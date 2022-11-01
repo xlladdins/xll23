@@ -18,7 +18,7 @@
 */
 #pragma once
 #include <vector>
-#include "oper.h"
+#include "excel.h"
 
 namespace xll {
 

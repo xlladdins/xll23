@@ -52,13 +52,13 @@ namespace xll {
 		using type = XLOPER;
 		using xchar = CHAR;
 		using charx = XCHAR;
-		static const size_t str_max = 0xFF;
+		static const size_t str_max = 0x100;
 		using xref = XLREF;
 		// Multi
 		using xrw = WORD;
 		using xcol = WORD;
-		static const size_t rw_max = 0xFFFF;
-		static const size_t col_max = 0xFF;
+		static const size_t rw_max = 0x10000;
+		static const size_t col_max = 0x100;
 		static int Excelv(int xlfn, LPXLOPER operRes, int count, LPXLOPER opers[])
 		{
 			return ::Excel4v(xlfn, operRes, count, opers);
@@ -69,13 +69,13 @@ namespace xll {
 		using type = XLOPER12;
 		using xchar = XCHAR;
 		using charx = CHAR;
-		static const size_t str_max = 0x7FFF;
+		static const size_t str_max = 0x8000;
 		using xref = XLREF12;
 		// Multi
 		using xrw = INT32;
 		using xcol = INT32;
-		static const size_t rw_max = 0xFFFFF;
-		static const size_t col_max = 0x3FFF;
+		static const size_t rw_max = 0x100000;
+		static const size_t col_max = 0x4000;
 		static int Excelv(int xlfn, LPXLOPER12 operRes, int count, LPXLOPER12 opers[])
 		{
 			return ::Excel12v(xlfn, operRes, count, opers);

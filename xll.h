@@ -6,19 +6,6 @@
 #endif
 #include "XLCALL.H"
 #include "ensure.h"
-
-#ifndef XLL_VERSION
-#define XLL_VERSION 12
-#endif
-
-#if XLL_VERSION == 12
-using XLREFX = XLREF12;
-using XLOPERX = XLOPER12;
-#else
-using XLREFX = XLREF;
-using XLOPERX = XLOPER;
-#endif
-
 #include "excel.h"
 //#include "counted_array_view.h"
 

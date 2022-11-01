@@ -2,6 +2,18 @@
 #pragma once
 #include <map>
 
+#ifndef XLL_VERSION
+#define XLL_VERSION 12
+#endif
+
+#if XLL_VERSION == 12
+using XLREFX = XLREF12;
+using XLOPERX = XLOPER12;
+#else
+using XLREFX = XLREF;
+using XLOPERX = XLOPER;
+#endif
+
 // Used to export undecorated function name from a dll.
 // Put '#pragma XLLEXPORT' in every add-in function body.
 #define XLLEXPORT comment(linker, "/export:" __FUNCDNAME__ "=" __FUNCTION__)

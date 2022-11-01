@@ -1,7 +1,8 @@
 // counted_array_view.h
 #pragma once
 #include <memory>
-#include <Windows.h>
+#include <stdexcept>
+#include "Win.h"
 
 namespace xll {
 
@@ -17,16 +18,23 @@ namespace xll {
 		HANDLE h;
 		T* pt;
 	public:
+		// Open with FILE_MAP_ALL_ACCESS to create
 		counted_array_view(const char* name, DWORD access = FILE_MAP_READ, DWORD hi = 0, DWORD lo = 1 << 20)
 		{
 			if (access == FILE_MAP_READ) {
 				h = OpenFileMappingA(access, 0, name);
+				if (!h) {
+					throw std::runtime_error(Win::GetFormatMessage());
+				}
 			}
 			else {
 				h = CreateFileMappingA(INVALID_HANDLE_VALUE, 0, access, hi, lo, name);
+				if (!h) {
+					throw std::runtime_error(Win::GetFormatMessage());
+				}
 			}
 
-			pt = MapViewOfFile(h, access, hi, lo, lo);
+			pt = static_cast<T*>(MapViewOfFile(h, access, hi, lo, lo));
 		}
 		counted_array_view(const counted_array_view&) = delete;
 		counted_array_view& operator=(const counted_array_view&) = delete;
@@ -54,10 +62,12 @@ namespace xll {
 			return s;
 		}
 
-		T* append(const T* t)
+		counted_array_view& append(const T* t)
 		{
-			++* pt;
+			++*pt;
 			memcpy(operator[](*pt), t, (t[0] + 1) * sizeof(T));
+
+			return *this;
 		}
 
 		counted_array_view& pop_back(T n = 1)

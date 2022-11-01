@@ -14,6 +14,10 @@ namespace xll {
 		= std::is_same_v<WORD, X> || std::is_same_v<INT32, X>;
 
 	template<class X>
+	concept is_char
+		= std::is_same_v<CHAR, X> || std::is_same_v<XCHAR, X>;
+
+	template<class X>
 	concept is_xlref
 		= std::is_same_v<XLREF, X> || std::is_same_v<XLREF12, X>;
 

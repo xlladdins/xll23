@@ -22,20 +22,59 @@
 
 namespace xll {
 
-	template<class Procedure, class TypeText, class FunctionText, class ArgumentText,
-		class MacroType, class Category, class ShortcutText,
-		class HelpTopic, class FunctionHelp, class... ArgumentHelp>
-
-	inline int Register(const Procedure& procedure)
+	template<
+		class Procedure,
+		class TypeText,
+		class FunctionText,
+		class ArgumentText,
+		class MacroType,
+		class Category,
+		class ShortcutText,
+		class HelpTopic,
+		class FunctionHelp,
+		class... ArgumentHelp>
+	inline XLOPERX Register(
+		const Procedure& procedure,
+		const TypeText& typeText,
+		const FunctionText& functionText,
+		const ArgumentText& argumentText,
+		const MacroType& macroType,
+		const Category& category,
+		const ShortcutText& shortcutText,
+		const HelpTopic& helpTopic,
+		const FunctionHelp* functionHelp
+		//const ArgumentHelp...& argumentHelp
+		)
 	{
 		OPER arg(11 + sizeof...(ArgumentHelp), 1);
+		int i = 0;
 		arg[0] = Excel(xlGetName);
 		arg[1] = procedure;
-		// array of pointers
-		std::vector<LPXLOPER> args(args.size());
+		arg[2] = typeText;
+		arg[3] = typeText;
+		arg[4] = functionText;
+		arg[5] = argumentText;
+		arg[6] = macroType;
+		arg[7] = category;
+		arg[8] = shortcutText;
+		arg[9] = helpTopic;
+		arg[10] = functionHelp;
+//				class... ArgumentHelp
+				// array of pointers
+		int count = 10;
+		std::vector<XLOPERX*> args(args.size());
 		for (const auto& a : args) {
 			args[i] = &arg[i];
 		}
+
+		XLOPERX registerId = { .xltype = xltypeNil };
+		int ret = traits<XLOPERX>::Excelv(xlfRegister, &registerId, count, (XLOPERX**)&args[0]);
+		if (ret != xlretSuccess || registerId.xltype != xltypeNum) {
+			OPER xMsg("Failed to register: ");
+			//Excel(xlcAlert, xMsg /* & args.FunctionText()*/, OPER(2));
+		}
+
+		return registerId;
 		return 0;
 	}
 

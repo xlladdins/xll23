@@ -1,11 +1,12 @@
 // xloper.h - XLOPER functions
-// Use native C SDK XLOPER/12 structs and compile time string literals for xltypeStr with fixed length
+// Use native C SDK XLOPER/12 structs
 #pragma once
+#include <algorithm>
 #include <map>
+#include "defines.h"
 #include "xlref.h"
 
 namespace xll {
-
 
 	template<XlOper X>
 	inline constexpr auto type(const X& x)
@@ -14,16 +15,44 @@ namespace xll {
 	}
 
 	template<XlOper X>
+	constexpr bool as_bool(const X& x)
+	{
+		switch (type(x)) {
+			case xltypeNum: return x.val.num;
+			case xltypeStr: return x.val.str[0];
+			case xltypeBool: return x.val.xbool;
+			case xltypeErr: return false;
+			case xltypeMulti: return std::any_of(begin(x), end(x), as_bool);
+			case xltypeSRef: return area(x.val.sref.ref);
+			case xltypeInt: return x.val.w;
+		}
+
+		return false;
+	}
+
+	template<XlOper X>
+	constexpr double as_double(const X& x)
+	{
+		switch (type(x)) {
+			case xltypeNum: return x.val.num;
+			case xltypeBool: return x.val.xbool;
+			case xltypeInt: return x.val.w;
+		}
+
+		return std::numeric_limits<double>::quiet_NaN();
+	}
+
+	template<XlOper X>
 	inline constexpr auto rows(const X& x)
 	{
 		switch (type(x)) {
-		case xltypeMulti:
-			return x.val.array.rows;
-		case xltypeSRef:
-			return height(x.val.sref.ref);
-		case xltypeNil:
-		case xltypeMissing:
-			return 0;
+			case xltypeMulti:
+				return x.val.array.rows;
+			case xltypeSRef:
+				return height(x.val.sref.ref);
+			case xltypeNil:
+			case xltypeMissing:
+				return 0;
 		}
 
 		return 1;
@@ -33,13 +62,13 @@ namespace xll {
 	inline constexpr auto columns(const X& x)
 	{
 		switch (type(x)) {
-		case xltypeMulti:
-			return x.val.array.columns;
-		case xltypeSRef:
-			return width(x.val.sref.ref);
-		case xltypeNil:
-		case xltypeMissing:
-			return 0;
+			case xltypeMulti:
+				return x.val.array.columns;
+			case xltypeSRef:
+				return width(x.val.sref.ref);
+			case xltypeNil:
+			case xltypeMissing:
+				return 0;
 		}
 
 		return 1;
@@ -48,11 +77,11 @@ namespace xll {
 	template<XlOper X>
 	inline constexpr auto size(const X& x)
 	{
-		return type(x) == rows(x) * columns(x);
+		return rows(x) * columns(x);
 	}
 
 	template<XlOper X>
-	inline consteval X* begin(X& x)
+	inline constexpr X* begin(X& x)
 	{
 		switch (type(x)) {
 		case xltypeMulti:
@@ -72,7 +101,7 @@ namespace xll {
 		}
 	}
 	template<XlOper X>
-	inline consteval X* end(X& x)
+	inline constexpr X* end(X& x)
 	{
 		switch (type(x)) {
 		case xltypeMulti:
@@ -133,7 +162,7 @@ namespace xll {
 
 	// 1-d index
 	template<XlOper X>
-	consteval X& index(X& x, int i)
+	constexpr X& index(X& x, int i)
 	{
 		return x.val.array[i];
 	}
@@ -145,7 +174,7 @@ namespace xll {
 
 	// 2-d index
 	template<XlOper X>
-	consteval X& index(X& x, int i, int j)
+	constexpr X& index(X& x, int i, int j)
 	{
 		return x.val.array[i * columns(x) + j];
 	}
@@ -159,10 +188,10 @@ namespace xll {
 	template<is_xloper X>
 	struct XNum : X {
 		using type = X;
-		explicit consteval XNum(double num = 0)
+		explicit constexpr XNum(double num = 0)
 			: X{ .val = {.num = num}, .xltype = xltypeNum }
 		{ }
-		consteval operator double&()
+		constexpr operator double&()
 		{
 			return X::val.num;
 		}
@@ -170,7 +199,8 @@ namespace xll {
 		{
 			return X::val.num;
 		}
-		consteval XNum& operator++()
+
+		constexpr XNum& operator++()
 		{
 			++X::val.num;
 
@@ -184,25 +214,24 @@ namespace xll {
 
 			return num;
 		}
-		XNum& operator+=(double num)
+		constexpr XNum& operator--()
 		{
-			X::val.num += num;
+			--X::val.num;
 
 			return *this;
 		}
-		XNum& operator-=(double num)
+		XNum operator--(int)
 		{
-			X::val.num -= num;
+			auto num(*this);
 
-			return *this;
+			--X::val.num;
+
+			return num;
 		}
 	};
 	using Num4 = XNum<XLOPER>;
 	using Num12 = XNum<XLOPER12>;
 	using Num = XNum<XLOPERX>;
-
-	template<> struct traits<Num4> { using type = XLOPER; };
-	template<> struct traits<Num12> { using type = XLOPER12; };
 
 #ifdef _DEBUG
 	inline void test_xloper_num()
@@ -217,6 +246,10 @@ namespace xll {
 			constexpr auto num = Num(1);
 			static_assert(1 == num);
 			static_assert(2 == 1 + num);
+			static_assert(2 == ++Num(1));
+			static_assert(1 == --Num(2));
+			static_assert(2 == (Num(1) += 1));
+			static_assert(1 == (Num(2) -= 1));
 		}
 	}
 #endif // _DEBUG
@@ -227,11 +260,10 @@ namespace xll {
 		using type = X;
 		T str[N]{};
 		constexpr Str(const T(&_str)[N])
-			: X{ .xltype = xltypeStr }
+			: X{ .val = { .str = str }, .xltype = xltypeStr}
 		{
-			ensure(N <= traits<X>::str_max);
+			static_assert(N <= traits<X>::str_max);
 
-			X::val.str = str;
 			str[0] = static_cast<T>(N - 1);
 			for (size_t i = 0; i < N - 1; ++i) {
 				str[i + 1] = _str[i];
@@ -294,32 +326,6 @@ namespace xll {
 	}
 #endif // _DEBUG
 
-	// xlerrX, Excel error string, error message
-#define XLL_ERR(X)	                                                        \
-	X(Null,  "#NULL!",  "intersection of two ranges that do not intersect") \
-	X(Div0,  "#DIV/0!", "formula divides by zero")                          \
-	X(Value, "#VALUE!", "variable in formula has wrong type")               \
-	X(Ref,   "#REF!",   "formula contains an invalid cell reference")       \
-	X(Name,  "#NAME?",  "unrecognised formula name or text")                \
-	X(Num,   "#NUM!",   "invalid number")                                   \
-	X(NA,    "#N/A",    "value not available to a formula.")                \
-
-#define XLL_ERR_ENUM(a,b,c) a = xlerr##a,
-	enum class XlErr {
-		XLL_ERR(XLL_ERR_ENUM)
-	};
-#undef XLL_ERR_ENUM
-#define XLL_ERR_ENUM(a,b,c) {xlerr##a, b},
-	inline const std::map<int, const char*> xll_err_str = {
-		XLL_ERR(XLL_ERR_ENUM)
-	};
-#undef XLL_ERR_ENUM
-#define XLL_ERR_ENUM(a,b,c) {xlerr##a, c},
-	inline const std::map<int, const char*> xll_err_msg = {
-		XLL_ERR(XLL_ERR_ENUM)
-	};
-#undef XLL_ERR_ENUM
-
 	// xltypeErr = 0x10
 	template<is_xloper X>
 	struct XErr : X {
@@ -352,8 +358,8 @@ namespace xll {
 		constexpr Multi()
 			: type{ .val = {.array = {.rows = R, .columns = C}}, .xltype = xltypeMulti}
 		{
-			ensure(R <= traits<XLOPER12>::rw_max);
-			ensure(C <= traits<XLOPER12>::col_max);
+			static_assert(R <= traits<XLOPER12>::rw_max);
+			static_assert(C <= traits<XLOPER12>::col_max);
 
 			type::val.array.lparray = arr;
 			for (auto& a : arr) {
@@ -365,14 +371,13 @@ namespace xll {
 	struct Multi4 : XLOPER {
 		using type = XLOPER;
 
-		type arr[R * C];
+		type arr[R * C] = { 0 };
 		constexpr Multi4()
-			: type{ .val = {.array = {.rows = R, .columns = C}}, .xltype = xltypeMulti }
+			: type{ .val = {.array = {.lparray = arr, .rows = R, .columns = C }}, .xltype = xltypeMulti }
 		{
-			ensure(R <= traits<XLOPER>::rw_max);
-			ensure(C <= traits<XLOPER>::col_max);
+			static_assert(R <= traits<XLOPER>::rw_max);
+			static_assert(C <= traits<XLOPER>::col_max);
 
-			type::val.array.lparray = arr;
 			for (auto& a : arr) {
 				a.xltype = xltypeNil;
 			}
@@ -380,7 +385,7 @@ namespace xll {
 	};
 
 #ifdef _DEBUG
-	void test_xloper_multi()
+	inline void test_xloper_multi()
 	{
 		{
 			constexpr Multi<1, 2> m;

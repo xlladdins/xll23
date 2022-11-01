@@ -55,7 +55,7 @@ namespace xll {
 
 		return x;
 	}
-	inline constexpr XLREF move(XLREF x, RW r, COL c)
+	inline constexpr XLREF move(XLREF x, WORD r, BYTE c)
 	{
 		x.rwFirst += r;
 		x.rwLast += r;
@@ -93,6 +93,33 @@ namespace xll {
 		}
 	};
 
+	struct REF4 : XLREF {
+
+		// Default to A1:A1
+		constexpr REF4(WORD r = 0, BYTE c = 0, WORD h = 1, BYTE w = 1)
+			: XLREF{ .rwFirst = r, .rwLast = static_cast<WORD>(r + h - 1),
+				.colFirst = c, .colLast = static_cast<BYTE>(c + w - 1) }
+		{ }
+		constexpr REF4(const XLREF& r)
+			: XLREF{ r }
+		{ }
+
+		// set height
+		constexpr REF4& height(WORD h)
+		{
+			XLREF::rwLast = XLREF::rwFirst + h - 1;
+
+			return *this;
+		}
+		// set width
+		constexpr REF4& width(BYTE w)
+		{
+			XLREF::colLast = XLREF::colFirst + w - 1;
+
+			return *this;
+		}
+	};
+
 #ifdef _DEBUG
 	inline void test_xlref()
 	{
@@ -116,8 +143,14 @@ namespace xll {
 		{
 			constexpr XLREF12 r12{ .rwFirst = 1, .rwLast = 2, .colFirst = 3, .colLast = 4 };
 			constexpr REF r{ r12 };
-			//static_assert(r == r12);
-			//static_assert(r12 == r);
+			static_assert(r == r12);
+			static_assert(r12 == r);
+		}
+		{
+			constexpr XLREF r4{ .rwFirst = 1, .rwLast = 2, .colFirst = 3, .colLast = 4 };
+			constexpr REF4 r{ r4 };
+			static_assert(r == r4);
+			static_assert(r4 == r);
 		}
 	}
 #endif // _DEBUG

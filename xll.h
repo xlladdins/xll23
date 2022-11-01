@@ -14,13 +14,13 @@
 #if XLL_VERSION == 12
 using XLREFX = XLREF12;
 using XLOPERX = XLOPER12;
-using xchar = wchar_t;
+using xchar = XCHAR;
 #else
 using XLREFX = XLREF;
 using XLOPERX = XLOPER;
-using xchar = char;
+using xchar = CHAR;
 #endif
 
-#include "oper.h"
+#include "excel.h"
 //#include "counted_array_view.h"
 

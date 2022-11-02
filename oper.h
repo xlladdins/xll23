@@ -1,4 +1,4 @@
-// oper.h
+// oper.h - Excel cell or 2-d range of cells
 #pragma once
 #include <concepts>
 #include <memory>
@@ -113,12 +113,7 @@ namespace xll {
 		{
 			_XOPER();
 		}
-		/*
-		constexpr bool operator==(const XOPER& o) const
-		{
-			return *this == o;
-		}*/
-		bool operator==(const X& o) const
+		constexpr bool operator==(const X& o) const
 		{
 			return operator==(*this, o);
 		}
@@ -134,7 +129,7 @@ namespace xll {
 		{ }
 		bool operator==(double num) const
 		{
-			return as_double(*this) == num;
+			return as_num(*this) == num;
 		}
 		operator double& ()
 		{
@@ -142,7 +137,7 @@ namespace xll {
 		}
 		operator const double& () const
 		{
-			return as_double(*this);
+			return as_num(*this);
 		}
 
 #ifdef _DEBUG
@@ -180,7 +175,7 @@ namespace xll {
 		}
 #endif
 		template<is_char T>
-		bool operator==(const T* str)
+		constexpr bool operator==(const T* str)
 		{
 			if (xll::type(*this) != xltypeStr) {
 				return false;
@@ -227,9 +222,9 @@ namespace xll {
 		{ }
 		bool operator==(bool b) const
 		{
-			return as_bool(*this) == b;
+			return static_cast<bool>(as_num(*this)) == b;
 		}
-		operator bool() const
+		constexpr operator bool() const
 		{
 			return as_bool(*this);
 		}
@@ -260,6 +255,15 @@ namespace xll {
 		{
 			return index(*this, i, j);
 		}
+
+		// Int
+		explicit XOPER(int w)
+			: X{ XInt<X>(w) }
+		{ }
+		bool operator==(int w) const
+		{
+			return as_num(*this) == w;
+		}
 	};
 
 	using OPER4 = XOPER<XLOPER>;
@@ -269,5 +273,6 @@ namespace xll {
 #ifdef _DEBUG
 	//inline constexpr int i = 1;
 #endif // _DEBUG
+
 
 } // namespace xll

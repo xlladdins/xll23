@@ -31,7 +31,7 @@ namespace xll {
 	}
 
 	template<XlOper X>
-	constexpr double as_double(const X& x)
+	constexpr double as_num(const X& x)
 	{
 		switch (type(x)) {
 			case xltypeNum: return x.val.num;
@@ -422,5 +422,25 @@ namespace xll {
 	using Nil4 = XNil<XLOPER>;
 	using Nil12 = XNil<XLOPER12>;
 	using Nil = XNil<XLOPERX>;
+
+	// sref
+
+	// xltypeInt = 0x0800
+	template<is_xloper X>
+	struct XInt : X {
+		using type = X;
+		explicit constexpr XInt(int w)
+			: X{ .val = {.w = w}, .xltype = xltypeInt }
+		{ }
+
+		constexpr operator int() const
+		{
+			return  X::val.w;
+		}
+	};
+	using Int4 = XInt<XLOPER>;
+	using Int12 = XInt<XLOPER12>;
+	using Int = XInt<XLOPERX>;
+
 
 } // namespace xll

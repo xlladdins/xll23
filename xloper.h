@@ -254,7 +254,7 @@ namespace xll {
 #endif // _DEBUG
 
 	// xltypeStr = 2
-	template<size_t N, class T, class X = typename traits<T>::xloper>
+	template<size_t N, is_char T, class X = typename traits<T>::xloper>
 	struct Str : X {
 		using type = X;
 		T str[N]{};
@@ -349,12 +349,32 @@ namespace xll {
 #endif // _DEBUG
 
 	// xltypeMulti = 0x40
-	template<int R = 1, int C = 1>
-	struct Multi : XLOPER12 {
+	template<is_index R, is_index C, class X = typename traits<R>::xloper>
+	struct Multi : X {
+		using type = X;
+
+		X arr[R * C];
+		constexpr Multi()
+			: X{ .val = {.array = {.rows = R, .columns = C}, .xltpe = xltypeMulti } }
+		{ 
+			static_assert(R <= traits<X>::rw_max);
+			static_assert(C <= traits<X>::col_max);
+
+			type::val.array.lparray = arr;
+			for (auto& a : arr) {
+				a.xltype = xltypeNil;
+			}
+		}
+	};
+	//template<WORD R, WORD C>
+	//using Multi4 = Multi<R, C, XLOPER>;
+/*
+template<int R = 1, int C = 1>
+	struct Multi12 : XLOPER12 {
 		using type = XLOPER12;
 
 		XLOPER12 arr[R * C];
-		constexpr Multi()
+		constexpr Multi12()
 			: type{ .val = {.array = {.rows = R, .columns = C}}, .xltype = xltypeMulti}
 		{
 			static_assert(R <= traits<XLOPER12>::rw_max);
@@ -382,22 +402,26 @@ namespace xll {
 			}
 		}
 	};
-
+	*/
 #ifdef _DEBUG
 	inline void test_xloper_multi()
 	{
 		{
-			constexpr Multi<1, 2> m;
-			static_assert(1 == rows(m));
+			constexpr INT32 R = 1;
+			constexpr INT32 C = 2;
+			//constexpr Multi<R, C> m;
+			//static_assert(1 == rows(m));
 		}
+		/*
 		{
-			constexpr Multi4<1, 2> m;
+			constexpr Multi<1u, 2u> m;
 			static_assert(2 == columns(m));
 		}
 		{
-			constexpr Multi4<2, 3> m;
+			constexpr Multi<2u, 3u> m;
 			static_assert(6 == size(m));
 		}
+		*/
 	}
 #endif // _DEBUG
 

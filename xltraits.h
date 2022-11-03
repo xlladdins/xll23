@@ -89,4 +89,11 @@ namespace xll {
 		using xloper = XLOPER12;
 	};
 
+	template<> struct traits<WORD> {
+		using xloper = XLOPER;
+	};
+	template<> struct traits<INT32> {
+		using xloper = XLOPER12;
+	};
+
 } // namespace xll

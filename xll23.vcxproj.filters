@@ -30,9 +30,6 @@
     <ClInclude Include="xll.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="counted_array_view.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="xltraits.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -52,6 +49,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Win.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\xll_match\win_mem_view.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

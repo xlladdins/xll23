@@ -151,7 +151,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="counted_array_view.h" />
+    <ClInclude Include="..\xll_match\win_mem_view.h" />
     <ClInclude Include="defines.h" />
     <ClInclude Include="ensure.h" />
     <ClInclude Include="excel.h" />

@@ -1,6 +1,6 @@
 // xlauto.cpp - xlAuto* functions
 #include "xll.h"
-#include "counted_array_view.h"
+#include "win_mem_view.h"
 
 extern "C" int __declspec(dllexport) xlAutoOpen()
 {

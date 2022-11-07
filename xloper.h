@@ -407,10 +407,8 @@ template<int R = 1, int C = 1>
 	inline void test_xloper_multi()
 	{
 		{
-			constexpr INT32 R = 1;
-			constexpr INT32 C = 2;
-			//constexpr Multi<R, C> m;
-			//static_assert(1 == rows(m));
+//			constexpr Multi<1, 2> m;
+//			static_assert(1 == rows(m));
 		}
 		/*
 		{

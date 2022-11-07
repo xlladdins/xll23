@@ -19,13 +19,17 @@ namespace xll {
 		return n;
 	}
 
-	template<is_xloper X>
+	template<is_xloper X, 
+		class Aoper = std::allocator<X>, 
+		class Astr = std::allocator<typename traits<X>::xchar>>
 	struct XOPER : X {
 		using type = X;
 		using xchar = traits<X>::xchar;
 		using charx = traits<X>::charx;
 		using X::xltype;
 		using X::val;
+		Aoper oper_alloc;
+		Astr str_alloc;
 	private:
 		void swap(XOPER& x)
 		{

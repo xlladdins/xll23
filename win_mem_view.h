@@ -9,6 +9,7 @@ namespace Win {
 	template<class T>
 	class mem_view {
 		HANDLE h;
+		DWORD max_len;
 	public:
 		T* buf;
 		DWORD len;
@@ -18,11 +19,11 @@ namespace Win {
 		/// </summary>
 		/// <param name="h">optional handle to file</param>
 		/// <param name="len">maximum size of buffer</param>
-		mem_view(HANDLE h_ = INVALID_HANDLE_VALUE, DWORD len = 1 << 20)
-			: h(CreateFileMapping(h_, 0, PAGE_READWRITE, 0, len * sizeof(T), nullptr)), buf(nullptr), len(0)
+		mem_view(DWORD max_len = 1 << 20)
+			: h(CreateFileMapping(INVALID_HANDLE_VALUE, 0, PAGE_READWRITE, 0, len * sizeof(T), nullptr)),
+			  max_len(max_len), buf(nullptr), len(0)
 		{
 			if (h != NULL) {
-				len = 0;
 				buf = (T*)MapViewOfFile(h, FILE_MAP_ALL_ACCESS, 0, 0, len * sizeof(T));
 			}
 		}
@@ -36,6 +37,7 @@ namespace Win {
 		{
 			if (this != &mv) {
 				h = std::exchange(mv.h, INVALID_HANDLE_VALUE);
+				max_len = std::exchange(mv.max_len, 0);
 				buf = std::exchange(mv.buf, nullptr);
 				len = std::exchange(mv.len, 0);
 			}
@@ -63,6 +65,7 @@ namespace Win {
 		{
 			return buf;
 		}
+
 		T* begin()
 		{
 			return buf;
@@ -71,6 +74,7 @@ namespace Win {
 		{
 			return buf;
 		}
+
 		T* end()
 		{
 			return buf + len;
@@ -89,7 +93,8 @@ namespace Win {
 		mem_view& append(const T* s, DWORD n)
 		{
 			if (n) {
-				std::copy(s, s + n, buf + len);
+				ensure(len + n < max_len);
+				std::copy(s, s + n, end());
 				len += n;
 			}
 
@@ -106,14 +111,6 @@ namespace Win {
 			return append(&t, one);
 		}
 
-		T* back(const T& t)
-		{
-			return buf + len - 1;
-		}
-		const T* back(const T& t) const
-		{
-			return buf + len - 1;
-		}
 	};
 
 } // namespace Win

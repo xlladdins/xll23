@@ -1,8 +1,9 @@
-// xll_win_mem.cpp - in memory data
+// win_mem_view.cpp - memory mapped data
 #define NOMINMAX
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <memoryapi.h>
+#include "ensure.h"
 
 namespace Win {
 
@@ -18,9 +19,9 @@ namespace Win {
 		/// Map file of temporary anonymous memory.
 		/// </summary>
 		/// <param name="h">optional handle to file</param>
-		/// <param name="len">maximum size of buffer</param>
-		mem_view(DWORD max_len = 1 << 20)
-			: h(CreateFileMapping(INVALID_HANDLE_VALUE, 0, PAGE_READWRITE, 0, len * sizeof(T), nullptr)),
+		/// <param name="len">initial size of buffer</param>
+		mem_view(HANDLE h_ = INVALID_HANDLE_VALUE, DWORD max_len = 1 << 23)
+			: h(CreateFileMapping(h_, 0, PAGE_READWRITE, 0, max_len * sizeof(T), nullptr)), 
 			  max_len(max_len), buf(nullptr), len(0)
 		{
 			if (h != NULL) {
@@ -37,7 +38,6 @@ namespace Win {
 		{
 			if (this != &mv) {
 				h = std::exchange(mv.h, INVALID_HANDLE_VALUE);
-				max_len = std::exchange(mv.max_len, 0);
 				buf = std::exchange(mv.buf, nullptr);
 				len = std::exchange(mv.len, 0);
 			}
@@ -66,15 +66,6 @@ namespace Win {
 			return buf;
 		}
 
-		T* begin()
-		{
-			return buf;
-		}
-		const T* begin() const
-		{
-			return buf;
-		}
-
 		T* end()
 		{
 			return buf + len;
@@ -84,17 +75,12 @@ namespace Win {
 			return buf + len;
 		}
 
-		explicit operator bool() const
-		{
-			return h != NULL && buf != nullptr;
-		}
-
 		// Write to buffered memory.
 		mem_view& append(const T* s, DWORD n)
 		{
+			ensure(h && len + n < max_len);
 			if (n) {
-				ensure(len + n < max_len);
-				std::copy(s, s + n, end());
+				std::copy(s, s + n, buf + len);
 				len += n;
 			}
 
@@ -106,11 +92,10 @@ namespace Win {
 		}
 		mem_view& append(T t)
 		{
-			DWORD one = 1;
-
-			return append(&t, one);
+			return append(&t, 1);
 		}
-
 	};
+
+	// class alocator...
 
 } // namespace Win

@@ -151,12 +151,12 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\xll_match\win_mem_view.h" />
     <ClInclude Include="defines.h" />
     <ClInclude Include="ensure.h" />
     <ClInclude Include="excel.h" />
     <ClInclude Include="utf8.h" />
     <ClInclude Include="Win.h" />
+    <ClInclude Include="win_mem_view.h" />
     <ClInclude Include="xlregister.h" />
     <ClInclude Include="xltraits.h" />
     <ClInclude Include="xlref.h" />

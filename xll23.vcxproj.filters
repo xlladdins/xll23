@@ -51,7 +51,7 @@
     <ClInclude Include="Win.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\xll_match\win_mem_view.h">
+    <ClInclude Include="win_mem_view.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

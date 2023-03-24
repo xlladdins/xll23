@@ -1,10 +1,19 @@
 // xltraits.h - Parameterize by old and post Excel 2007 API
 // https://support.microsoft.com/en-us/office/excel-specifications-and-limits-1672b34d-7043-467e-8e27-269d656771c3
 #pragma once
+#include <array>
 #include <concepts>
 #include <type_traits>
 #include <Windows.h>
 #include "XLCALL.H"
+
+/*
+template<wchar_t... cs>
+constexpr auto operator""_wp()
+{
+	return std::array{ sizeof...(cs), cs... }
+}
+*/
 
 namespace xll {
 
@@ -95,5 +104,6 @@ namespace xll {
 	template<> struct traits<INT32> {
 		using xloper = XLOPER12;
 	};
+
 
 } // namespace xll

@@ -1,13 +1,19 @@
 // oper.h - Excel cell or 2-d range of cells
 #pragma once
 #include <concepts>
-#include <memory>
+#include <scoped_allocator>
 #include <type_traits>
 #include "utf8.h"
 #include "xloper.h"
 
 namespace xll {
 
+	template<class T>
+	constexpr std::size_t len(const T* s)
+	{
+		return std::char_traits<T>::length(s);
+	}
+	/*
 	// null terminated length
 	template<class T>
 	inline consteval size_t len(const T* t)
@@ -18,18 +24,13 @@ namespace xll {
 
 		return n;
 	}
-
-	template<is_xloper X, 
-		class Aoper = std::allocator<X>, 
-		class Astr = std::allocator<typename traits<X>::xchar>>
+	*/
+	template<is_xloper X>
 	struct XOPER : X {
-		using type = X;
 		using xchar = traits<X>::xchar;
 		using charx = traits<X>::charx;
 		using X::xltype;
 		using X::val;
-		Aoper oper_alloc;
-		Astr str_alloc;
 	private:
 		void swap(XOPER& x)
 		{
@@ -42,6 +43,7 @@ namespace xll {
 
 			xltype = xltypeStr;
 			val.str = new xchar[len + 1];
+			//new xchar[len + 1];
 			val.str[0] = static_cast<xchar>(len);
 			// stop if str is null terminated
 			for (size_t i = 0; i < len && str[i]; ++i) {
@@ -53,7 +55,7 @@ namespace xll {
 			if (X::xltype == xltypeStr) {
 				delete[] val.str;
 			}
-			else if (X::xltype |= xlbitXLFree) {
+			else if (X::xltype & xlbitXLFree) {
 				X* this_[1] = { this };
 				traits<X>::Excelv(xlFree, 0, 1, (X**)this_);
 			}
@@ -62,7 +64,7 @@ namespace xll {
 		}
 	public:
 		XOPER()
-			: X{.xltype = xltypeNil}
+			: X{ .xltype = xltypeNil }
 		{ }
 		XOPER(const X& x)
 			: X{.xltype = xll::type(x)}
@@ -87,6 +89,7 @@ namespace xll {
 			case xltypeInt:
 				val.w = x.val.w;
 				break;
+			//case xltypeMulti:
 			}
 		}
 		XOPER(const XOPER& o)

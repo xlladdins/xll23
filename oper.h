@@ -224,7 +224,7 @@ namespace xll {
 #endif // _DEBUG
 
 		// Bool
-		explicit XOPER(bool xbool)
+		explicit XOPER(bool xbool) noexcept
 			: X{XBool<X>(xbool)}
 		{ }
 		bool operator==(bool b) const

@@ -42,6 +42,18 @@ namespace xll {
 	concept XlOper
 		= std::is_base_of_v<XLOPER, X> || std::is_base_of_v<XLOPER12, X>;
 
+	template<class X, class Y>
+	concept both_xloper
+		= std::is_base_of_v<XLOPER, X>&& std::is_base_of_v<XLOPER, Y>;
+
+	template<class X, class Y>
+	concept both_xloper12
+		= std::is_base_of_v<XLOPER12, X>&& std::is_base_of_v<XLOPER12, Y>;
+
+	template<class X, class Y>
+	concept same_xloper_base
+		= both_xloper<X, Y> || both_xloper12<X, Y>;
+
 	template<class X>
 	struct traits {};
 

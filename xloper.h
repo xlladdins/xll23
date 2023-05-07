@@ -167,9 +167,13 @@ namespace xll {
 	template<is_xloper X>
 	struct XNum : X {
 		using type = X;
-		explicit constexpr XNum(double num = 0)
+		explicit constexpr XNum(double num = 0) noexcept
 			: X{ .val = {.num = num}, .xltype = xltypeNum }
 		{ }
+		explicit XNum(const X& x)
+		{
+
+		}
 		constexpr operator double&()
 		{
 			return X::val.num;

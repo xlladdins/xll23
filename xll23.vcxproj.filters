@@ -15,47 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="oper.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="XLCALL.H">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="xloper.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="xlref.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="xll.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="xltraits.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="xlregister.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ensure.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="excel.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="utf8.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="defines.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Win.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="win_mem_view.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="XLCALL.CPP">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -65,12 +24,17 @@
     <ClCompile Include="debug.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="error.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Library Include="XLCALL32.LIB" />
     <Library Include="x64\XLCALL32.LIB" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="CMakeLists.txt" />
+    <ClInclude Include="error.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

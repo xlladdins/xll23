@@ -151,22 +151,8 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="defines.h" />
-    <ClInclude Include="ensure.h" />
-    <ClInclude Include="excel.h" />
-    <ClInclude Include="utf8.h" />
-    <ClInclude Include="Win.h" />
-    <ClInclude Include="win_mem_view.h" />
-    <ClInclude Include="xlregister.h" />
-    <ClInclude Include="xltraits.h" />
-    <ClInclude Include="xlref.h" />
-    <ClInclude Include="XLCALL.H" />
-    <ClInclude Include="oper.h" />
-    <ClInclude Include="xll.h" />
-    <ClInclude Include="xloper.h" />
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="debug.cpp" />
+    <ClCompile Include="error.cpp" />
     <ClCompile Include="xlauto.cpp" />
     <ClCompile Include="XLCALL.CPP" />
   </ItemGroup>
@@ -181,7 +167,7 @@
     </Library>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="CMakeLists.txt" />
+    <ClInclude Include="error.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
